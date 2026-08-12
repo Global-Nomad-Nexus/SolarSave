@@ -2,6 +2,12 @@
   <img src="client/images/kali.png" alt="SolarChain solar panel" width="180" />
 
   <h1>☀️ SolarChain</h1>
+  <a href="https://doi.org/10.5281/zenodo.21898921">
+  <img
+    src="https://zenodo.org/badge/DOI/10.5281/zenodo.21898921.svg"
+    alt="Zenodo DOI"
+  />
+</a>
 
   <p><strong>Physics-grounded embodied IoT for verifiable urban solar markets</strong></p>
   <p>
