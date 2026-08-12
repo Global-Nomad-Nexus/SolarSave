@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: "If you use SolarChain or its released artifacts, please cite the paper below."
+title: "SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design"
+type: software
+authors:
+  - family-names: Ou
+    given-names: Shilin
+  - family-names: Xu
+    given-names: Yifan
+  - family-names: Zhang
+    given-names: Zhenshan
+  - family-names: Zhang
+    given-names: Luyao
+  - family-names: Huang
+    given-names: Ming-Chun
+license: MIT
+repository-code: "https://github.com/sunshineluyao/SolarSave"
+url: "https://github.com/sunshineluyao/SolarSave"
+abstract: >-
+  SolarChain is a controlled embodied-IoT research prototype that connects
+  physics-bounded photovoltaic verification, persistent agent and planner
+  coordination, configurable reward and liquidity allocation, and replayable
+  hash-linked auditing with blockchain-backed energy settlement.
+keywords:
+  - embodied Internet of Things
+  - physics-grounded verification
+  - multi-agent coordination
+  - urban solar energy
+  - decentralized energy markets
+  - false-data injection
+preferred-citation:
+  type: conference-paper
+  title: "SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design"
+  authors:
+    - family-names: Ou
+      given-names: Shilin
+    - family-names: Xu
+      given-names: Yifan
+    - family-names: Zhang
+      given-names: Zhenshan
+    - family-names: Zhang
+      given-names: Luyao
+    - family-names: Huang
+      given-names: Ming-Chun
+  doi: "10.1145/3798063.3839423"
+  collection-title: "Companion of the 2026 ACM International Joint Conference on Pervasive and Ubiquitous Computing"
+  conference:
+    name: "UbiComp Companion '26"
+    location: "Shanghai, China"
+    date-start: "2026-10-11"
+    date-end: "2026-10-15"
+  publisher:
+    name: "Association for Computing Machinery"
+  month: 10
+  year: 2026

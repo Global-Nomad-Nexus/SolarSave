@@ -1,534 +1,389 @@
-# **SolarChain: Blockchain for Sustainable Energy Optimization**
+<div align="center">
+  <img src="client/images/kali.png" alt="SolarChain solar panel" width="180" />
 
-## **Overview**
+  <h1>☀️ SolarChain</h1>
 
-**SolarChain** is an open-source platform for urban distributed-energy verification and blockchain-backed solar asset registration. It combines geospatial interaction, physics-bounded solar modeling, planner review, wallet-signed on-chain registration, factory-side energy demand, and a simulator-driven market update flow.
+  <p><strong>Physics-grounded embodied IoT for verifiable urban solar markets</strong></p>
+  <p>
+    From weather-aware PV modeling and FDIA detection to human review,
+    wallet-signed registration, and blockchain-backed energy settlement.
+  </p>
 
-SolarChain is designed as an interactive decision-support tool for urban planners, energy communities, and researchers. The machine computes physical generation boundaries; the human reviews candidate distributed-energy-resource (DER) samples; approved candidates are cryptographically signed through MetaMask before becoming on-chain solar panels.
+  <p>
+    <a href="docs/camera_ready_release.md">
+      <img alt="Camera-ready release" src="https://img.shields.io/badge/release-camera--ready-0A7F5A?style=for-the-badge" />
+    </a>
+    <a href="LICENSE">
+      <img alt="MIT License" src="https://img.shields.io/github/license/sunshineluyao/SolarSave?style=for-the-badge&color=2563EB" />
+    </a>
+    <a href="https://github.com/sunshineluyao/SolarSave/commits/main">
+      <img alt="Last commit" src="https://img.shields.io/github/last-commit/sunshineluyao/SolarSave?style=for-the-badge&color=F59E0B" />
+    </a>
+    <a href="https://github.com/sunshineluyao/SolarSave/issues">
+      <img alt="GitHub issues" src="https://img.shields.io/github/issues/sunshineluyao/SolarSave?style=for-the-badge&color=DC2626" />
+    </a>
+  </p>
 
-Project naming note: the product name is **SolarChain**, while the repository/folder name remains `SolarSave`.
+  <p>
+    <img alt="Python" src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat-square&logo=python&logoColor=white" />
+    <img alt="React" src="https://img.shields.io/badge/React-18-20232A?style=flat-square&logo=react&logoColor=61DAFB" />
+    <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-simulator-009688?style=flat-square&logo=fastapi&logoColor=white" />
+    <img alt="Solidity" src="https://img.shields.io/badge/Solidity-EVM-363636?style=flat-square&logo=solidity&logoColor=white" />
+    <img alt="Hardhat" src="https://img.shields.io/badge/Hardhat-local_chain-FFF100?style=flat-square" />
+  </p>
 
-## **EIoT Research Positioning**
+  <p>
+    <a href="#architecture">Architecture</a> •
+    <a href="#quick-start">Quick Start</a> •
+    <a href="#research-artifact">Research Artifact</a> •
+    <a href="#smart-contracts">Contracts</a> •
+    <a href="#documentation">Documentation</a>
+  </p>
+</div>
 
-For EIoT-style evaluation, SolarChain is framed as **SolarAgents**: a
-physics-grounded embodied-IoT coordination testbed for verifiable urban solar
-energy systems. Each distributed PV node is represented as a lightweight
-embodied agent with physical attributes, environmental perception, generation
-reporting behavior, verification history, trust state, calibration memory, and
-market feedback. The blockchain layer is used as a verifiable settlement and
-audit layer after physical verification and planner review, rather than as the
-sole research contribution.
+> [!NOTE]
+> **SolarChain** is the product and paper name. The repository remains named
+> **SolarSave** for continuity with the original project.
 
-The EIoT experiment suite covers:
+## Overview
 
-- Closed-loop monthly agent episodes over 50 embodied PV agents and 720 hourly
-  coordination steps.
-- Persistent event, audit, connected-system, decision, market, and agent-state
-  traces with hash-chained records.
-- FDIA attack taxonomy, adaptive verification, reward/liquidity ratio sweep,
-  system-overhead measurement, and scale projection experiments.
+SolarChain is an open-source research prototype for urban distributed-energy
+verification and market coordination. It connects a physics-bounded solar
+simulator, embodied PV agents, a planner-facing map and review console, MetaMask,
+and a local EVM contract suite into one inspectable workflow.
 
+The machine calculates a defensible generation boundary. The planner decides
+whether a candidate distributed energy resource (DER) should proceed. Approved
+records are signed by a wallet and registered on-chain; rejected or anomalous
+records remain visible in the audit trail.
 
-## **Key Features**
+| ☀️ **50 PV agents** | 🕒 **720 hourly steps** | 📊 **36,000 records** | 🛡️ **11 attack scenarios** |
+|:---:|:---:|:---:|:---:|
+| Five Chinese cities | April 2026 episode | 5% scripted FDIA | Seven detector variants |
 
-### **Planner Decision Console**
-- **Candidate DER Queue**: Load hourly urban solar samples from CSV and review machine-checked records in a planner-facing queue.
-- **Human-in-the-Loop Verification**: Compare reported power against the physics maximum (`P_max_W`) before approving or rejecting a candidate.
-- **Audit Trail**: Track machine computation, planner review, wallet signature, and on-chain registration in one workflow.
+| | |
+|---|---|
+| **🛰️ Physics-grounded verification**<br />Derives `P_max_W` from weather, panel geometry, efficiency, and temperature effects before evaluating reported output. | **🧑‍💻 Human-in-the-loop governance**<br />A planner reviews candidate DER records, residuals, risk state, and map context before registration. |
+| **⛓️ Verifiable settlement**<br />MetaMask signs asset registration and EVM contracts track panels, factories, energy, rewards, trades, and SOLR. | **🔬 Reproducible evaluation**<br />Versioned datasets, experiment scripts, hash-linked traces, policy sweeps, and publication figures ship with the repository. |
 
-### **Interactive Map and Asset Creation**
-- **Candidate DER Samples**: Display imported DER records as map markers grouped by `node_id`.
-- **Solar Panel Registration**: Convert approved candidates, or manually selected coordinates, into on-chain solar panels.
-- **Factory Registration**: Register factories with location and power consumption to model energy demand on-chain.
-- **Layer Controls**: Toggle candidate DER samples, on-chain solar panels, and factory demand nodes.
+## Architecture
 
-### **Physics-Bounded Generation Verification**
-- **Prediction API Integration**: Uses the simulator API to predict panel values such as battery temperature, DC power, and AC power for selected locations.
-- **Boundary-Based Validation**: Imported records include `P_max_W`, `P_reported_W`, FDIA labels, and verification status.
-- **Planner Review Before Submission**: Panel registration requires explicit planner approval before the MetaMask signature and on-chain transaction.
+The system closes the loop between physical modeling, adaptive verification,
+human judgment, and market settlement.
 
-### **On-Chain Energy Market**
-- **Supply and Demand Tracking**: Maintains global supply energy and total market demand on-chain.
-- **Factory Energy Purchase**: Buy energy for a selected factory using SOLR, with on-chain cost preview.
-- **Factory Energy Balances**: Track per-factory energy balance and deficits in the UI.
-- **Market Impact View**: Compare verified SolarChain liquidity against a no-split baseline and inspect slippage reduction.
+```mermaid
+flowchart TB
+    subgraph INPUTS["1. Urban energy inputs"]
+        WEATHER["Open-Meteo weather"]
+        DER["PV node profiles"]
+        DEMAND["Factory demand"]
+    end
 
-### **Rewards and Cooldown Logic**
-- **Personal Reward Accrual**: Rewards accumulate from simulator market steps.
-- **Claim with Cooldown**: Reward claiming respects `simulatorStepSeconds` cooldown logic from the contract.
-- **Live Reward Preview**: Frontend previews claimable rewards before submission.
+    subgraph INTELLIGENCE["2. Physics and agent layer"]
+        MODEL["pvlib + SolarPVModel<br/>Physical P_max boundary"]
+        AGENTS["SolarAgents coordination<br/>trust, memory, verification"]
+        AUDIT["Hash-linked events<br/>audit and state traces"]
+    end
 
-### **Wallet and Token Operations**
-- **MetaMask Integration**: Connect wallet and interact with contracts through ethers.js.
-- **SOLR Transfers**: Transfer SOLR between addresses from the wallet UI.
-- **Owner Mint Tools (Local/Test)**: Token owner can mint SOLR for local testing workflows.
+    subgraph EXPERIENCE["3. Human decision layer"]
+        API["FastAPI simulator"]
+        UI["React + Leaflet<br/>Planner Console"]
+        REVIEW{"Planner review"}
+    end
 
----
+    subgraph SETTLEMENT["4. Verifiable settlement"]
+        WALLET["MetaMask signature"]
+        REGISTRY["SolarPanels + Factory"]
+        MARKET["EnergyExchange + PowerReward<br/>SOLR + Shop"]
+    end
 
-## **Tech Stack**
-
-| Technology    | Purpose                           |
-|---------------|-----------------------------------|
-| **Python (FastAPI + Uvicorn)** | Simulator and prediction API |
-| **React.js**  | Frontend interface and dashboards |
-| **Leaflet**   | Interactive map rendering         |
-| **Solidity**  | Smart contract development        |
-| **Hardhat**   | Local blockchain development and deployment |
-| **ethers.js** | Frontend and script blockchain integration |
-
----
-
-## **Dataset & Research Enablement**
-
-SolarChain includes a reproducible, multi-city simulation dataset under
-`Simulator/data/datasets_2026_04_month/`. The EIoT benchmark dataset covers a
-one-month hourly episode from `2026-04-01` to `2026-05-01` in
-`Asia/Shanghai`, combines `pvlib` solar modeling with
-Open-Meteo historical weather observations, and injects exactly 5% FDIA
-records for anomaly-detection benchmarking.
-
-Generate or refresh the dataset:
-
-```bash
-conda run -n SolarSave python Simulator/data/generate_monthly_datasets.py
+    WEATHER --> MODEL
+    DER --> MODEL
+    MODEL --> AGENTS
+    DEMAND --> AGENTS
+    AGENTS --> API
+    AGENTS --> AUDIT
+    API --> UI
+    UI --> REVIEW
+    REVIEW -->|Reject| AUDIT
+    REVIEW -->|Approve| WALLET
+    WALLET --> REGISTRY
+    REGISTRY --> MARKET
+    AGENTS -->|Verified market step| MARKET
+    MARKET --> UI
 ```
 
-Generate the reviewer and canonical research figures:
+### Verification to Settlement
+
+1. **Observe:** weather and node metadata drive a bounded PV generation model.
+2. **Verify:** agent policies compare `P_reported_W` with the physical boundary
+   and update trust, calibration, and verification state.
+3. **Review:** the planner inspects the candidate queue, map context, residuals,
+   and FDIA status.
+4. **Sign:** an approved candidate is signed through MetaMask and registered as
+   an on-chain solar panel.
+5. **Settle:** verified supply enters the configurable reward/liquidity market,
+   where factories purchase energy and rewards accrue.
+6. **Audit:** event, decision, market, and state records form reproducible,
+   hash-linked traces.
+
+## Research Snapshot
+
+<table>
+  <tr>
+    <td width="50%">
+      <a href="Simulator/data/visualizations/canonical_04_china_urban_energy_map.png">
+        <img src="Simulator/data/visualizations/canonical_04_china_urban_energy_map.png" alt="Urban solar nodes across five Chinese cities" width="100%" />
+      </a>
+    </td>
+    <td width="50%">
+      <a href="Simulator/data/visualizations/reviewer_a_generation_vs_reported_fdia.png">
+        <img src="Simulator/data/visualizations/reviewer_a_generation_vs_reported_fdia.png" alt="Physics-bounded generation and rejected FDIA records" width="100%" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><sub><strong>Five-city embodied PV network</strong></sub></td>
+    <td align="center"><sub><strong>Physics-bounded FDIA verification</strong></sub></td>
+  </tr>
+</table>
+
+The bundled benchmark is a reproducible, weather-driven simulation over
+Beijing, Chengdu, Hangzhou, Shanghai, and Shenzhen. It uses city-level
+Open-Meteo observations, `pvlib` solar modeling, synthetic PV node profiles,
+scripted false-data injection, and controlled market construction.
+
+<p align="center">
+  <a href="docs/camera_ready_release.md">
+    <img alt="Release record" src="https://img.shields.io/badge/Release_Record-open-0A7F5A?style=for-the-badge" />
+  </a>
+  <a href="docs/eiot_evaluation_artifacts.md">
+    <img alt="Evaluation map" src="https://img.shields.io/badge/Evaluation_Map-open-7C3AED?style=for-the-badge" />
+  </a>
+  <a href="Simulator/data/datasets_2026_04_month/dataset_provenance.json">
+    <img alt="Dataset provenance" src="https://img.shields.io/badge/Data_Provenance-open-0284C7?style=for-the-badge" />
+  </a>
+</p>
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- Python 3.9+
+- Git
+- MetaMask for wallet-signed interactions
+
+### 1. Clone
 
 ```bash
-conda run -n SolarSave python Simulator/data/visualizations.py
-```
-
-### **Frontend Dataset Import**
-
-The planner workbench reads static CSV files from
-`client/public/datasets_2026_04_month/` by default. Override this with
-`VITE_URBAN_DATASET_DIR` if you want the frontend to load another public CSV
-folder.
-
-| Frontend File | Used For |
-|---------------|----------|
-| `client/public/datasets_2026_04_month/spatiotemporal_generation.csv` | Candidate DER queue, map markers, physics-boundary review, FDIA status |
-| `client/public/datasets_2026_04_month/market_liquidity.csv` | Market Impact view and SolarChain-vs-baseline liquidity comparison |
-
-To update the client-side candidate data, replace those CSV files and refresh the frontend.
-The queue displays all hourly records from `spatiotemporal_generation.csv`; the map groups
-those records by `node_id`, so 720 hourly samples for one DER node appear as one location
-marker. Approved candidates can be converted into on-chain solar panels through the
-planner review and MetaMask signature workflow.
-
-Important planner metrics:
-
-| Metric | Meaning |
-|--------|---------|
-| **Verified DER** | Candidate records whose machine verification status is `verified`. |
-| **Rejected FDIA** | Candidate records rejected by the physics-boundary check. |
-| **On-chain** | Candidates registered as blockchain solar panels during the current client session. |
-| **Ready MW** | Verified, non-rejected generation estimate, computed from `min(P_reported_W, P_max_W)` and converted from W to MW. |
-
-### **Dataset Dictionary and Metadata**
-
-| CSV File | Description | Records | Fields |
-|----------|-------------|---------|--------|
-| `urban_energy_nodes.csv` | Static metadata for distributed urban solar nodes across Beijing, Shanghai, Chengdu, Shenzhen, and Hangzhou. | 50 | `node_id`, `city`, `latitude`, `longitude`, `panel_area_m2`, `efficiency`, `temp_coefficient`, `install_date` |
-| `spatiotemporal_generation.csv` | Hourly node-level solar generation records with physical power bounds, reported power, and FDIA labels. | 36,000 | `timestamp`, `hour`, `node_id`, `city`, `latitude`, `longitude`, `irradiance_Wm2`, `air_temp_C`, `P_max_W`, `P_reported_W`, `fdia_detected`, `verification_status` |
-| `market_liquidity.csv` | Hourly market-liquidity comparison between SolarChain's selected 20/80 reward-liquidity split and the baseline. | 720 | `timestamp`, `hour`, `total_verified_MW`, `reward_share`, `liquidity_share`, `producer_reward_MW`, `solarchain_liquidity_MW`, `demand_MW`, `fulfilled_demand_MW`, `unmet_demand_MW`, `baseline_liquidity_MW`, `slippage_solarchain_pct`, `slippage_baseline_pct` |
-| `p2p_trades.csv` | Simulated P2P energy purchases by factories using verified liquidity and token-burning records. | 1,185 | `trade_id`, `timestamp`, `hour`, `factory_id`, `city`, `energy_purchased_MW`, `tokens_burned`, `exergy_dissipated_MJ` |
-
-#### **`urban_energy_nodes.csv` Field Definitions**
-
-| Field | Definition |
-|-------|------------|
-| `node_id` | Unique identifier for each distributed solar node. |
-| `city` | Chinese city where the node is located. |
-| `latitude` | Node latitude in decimal degrees. |
-| `longitude` | Node longitude in decimal degrees. |
-| `panel_area_m2` | Installed photovoltaic panel area in square meters. |
-| `efficiency` | Panel conversion efficiency used by the simulator. |
-| `temp_coefficient` | Temperature coefficient used to derate output under non-standard temperature conditions. |
-| `install_date` | Synthetic installation date for the node. |
-
-#### **`spatiotemporal_generation.csv` Field Definitions**
-
-| Field | Definition |
-|-------|------------|
-| `timestamp` | Hourly timestamp with `Asia/Shanghai` timezone offset. |
-| `hour` | Hour of day, from 0 to 23. |
-| `node_id` | Node identifier matching `urban_energy_nodes.csv`. |
-| `city` | City associated with the node. |
-| `latitude` | Node latitude in decimal degrees. |
-| `longitude` | Node longitude in decimal degrees. |
-| `irradiance_Wm2` | Modeled/observed solar irradiance in watts per square meter. |
-| `air_temp_C` | Hourly air temperature in degrees Celsius. |
-| `P_max_W` | Physics-based maximum generation bound in watts. |
-| `P_reported_W` | Reported node generation in watts, including injected FDIA samples. |
-| `fdia_detected` | Ground-truth Boolean label for rejected false-data injection records. |
-| `verification_status` | Verification result, either `verified` or `rejected`. |
-
-#### **`market_liquidity.csv` Field Definitions**
-
-| Field | Definition |
-|-------|------------|
-| `timestamp` | Hourly market timestamp with `Asia/Shanghai` timezone offset. |
-| `hour` | Hour of day, from 0 to 23. |
-| `total_verified_MW` | Aggregated verified generation available to the market in megawatts. |
-| `reward_share` | Producer reward share used by the selected configurable split. |
-| `liquidity_share` | Market liquidity share used by the selected configurable split. |
-| `producer_reward_MW` | Verified generation allocated to producer rewards in megawatts. |
-| `solarchain_liquidity_MW` | Liquidity depth under the selected SolarChain split. |
-| `demand_MW` | Simulated factory demand in megawatts. |
-| `fulfilled_demand_MW` | Demand served by verified liquidity in megawatts. |
-| `unmet_demand_MW` | Demand not served by verified liquidity in megawatts. |
-| `baseline_liquidity_MW` | Liquidity depth under the no-split baseline. |
-| `slippage_solarchain_pct` | Estimated slippage percentage under the SolarChain mechanism. |
-| `slippage_baseline_pct` | Estimated slippage percentage under the no-split baseline. |
-
-#### **`p2p_trades.csv` Field Definitions**
-
-| Field | Definition |
-|-------|------------|
-| `trade_id` | Unique identifier for each simulated P2P trade. |
-| `timestamp` | Trade timestamp with `Asia/Shanghai` timezone offset. |
-| `hour` | Hour of day, from 0 to 23. |
-| `factory_id` | Simulated factory buyer identifier. |
-| `city` | City associated with the factory buyer. |
-| `energy_purchased_MW` | Purchased energy volume in megawatts. |
-| `tokens_burned` | SOLR-equivalent tokens burned by the trade. |
-| `exergy_dissipated_MJ` | Estimated dissipated exergy in megajoules. |
-
-### **Research Enablement**
-
-**Urban Resilience**  
-Urban-computing and resilience researchers can use `urban_energy_nodes.csv` and
-`spatiotemporal_generation.csv` to evaluate whether DER nodes are distributed
-reasonably across dense urban regions. Useful visual diagnostics include
-geospatial DER distribution maps, city-level node-density plots, installed
-capacity bubble maps, spatio-temporal heatmaps by city and hour, and intra-city
-generation boxplots. These figures help assess whether solar capacity is
-clustered too heavily in one city, whether generation diversity improves
-resilience during low-irradiance hours, and whether specific cities show
-abnormal volatility that could weaken local energy reliability.
-
-**Incentive Mechanisms**  
-Economists and market-design researchers can extract trade and liquidity
-variables from `p2p_trades.csv` and `market_liquidity.csv` to test alternative
-token policies. Key variables include `energy_purchased_MW`, `tokens_burned`,
-`exergy_dissipated_MJ`, `total_verified_MW`, `solarchain_liquidity_MW`,
-`baseline_liquidity_MW`, `slippage_solarchain_pct`, and
-`slippage_baseline_pct`. These records support counterfactual analysis of burn
-rates, liquidity incentives, slippage controls, and the effect of SolarChain's
-configurable reward/liquidity split compared with a baseline.
-
-**FDIA Anomaly Detection**  
-Machine-learning researchers can treat `spatiotemporal_generation.csv` as a
-supervised benchmark for false-data injection detection. `P_max_W` provides a
-physics-based upper bound, while `P_reported_W`, `irradiance_Wm2`, `air_temp_C`,
-`hour`, city, and node metadata provide model features. The `fdia_detected`
-column is the ground-truth classification label, and `verification_status`
-records the system-level decision. A typical pipeline is to split records by
-node or city to avoid leakage, train classifiers on physical residuals such as
-`P_reported_W - P_max_W` or ratios such as `P_reported_W / P_max_W`, and validate
-precision, recall, F1, ROC-AUC, and false-rejection rates against the labeled
-FDIA samples.
-
-The visualization script already produces eight English-language PNG figures
-covering reviewer-response plots and canonical urban-computing figures:
-
-| Figure | Output File |
-|--------|-------------|
-| Theoretical generation vs reported generation with rejected FDIA points | `Simulator/data/visualizations/reviewer_a_generation_vs_reported_fdia.png` |
-| Liquidity depth comparison: selected SolarChain split vs baseline | `Simulator/data/visualizations/reviewer_a_liquidity_depth_comparison.png` |
-| Spatio-temporal heatmap | `Simulator/data/visualizations/canonical_01_spatiotemporal_heatmap.png` |
-| Physics-bounded anomaly scatter plot | `Simulator/data/visualizations/canonical_02_physics_bounded_anomaly_scatter.png` |
-| Comparative policy line chart | `Simulator/data/visualizations/canonical_03_comparative_policy_line_chart.png` |
-| Geospatial DER distribution map | `Simulator/data/visualizations/canonical_04_geospatial_der_distribution.png` |
-| Digital-physical correlation plot | `Simulator/data/visualizations/canonical_05_digital_physical_correlation.png` |
-| Intra-city generation boxplot | `Simulator/data/visualizations/canonical_06_intra_city_generation_boxplots.png` |
-
----
-
-## **Installation and Running**
-
-### **1. Prerequisites**
-- **Node.js**: 18+ (LTS recommended)
-- **Python**: 3.9+ (3.10 recommended)
-- **Git**: latest
-- **MetaMask**: for local wallet interactions
-- **npm**: comes with Node.js (used by `client/` and `smart_contract/`)
-
-### **2. Clone the Project**
-```bash
-git clone https://github.com/GreenComp-ERC/SolarSave.git
+git clone https://github.com/sunshineluyao/SolarSave.git
 cd SolarSave
 ```
 
-### **3. Install Dependencies**
-Frontend:
+### 2. Start the Local Chain
+
 ```bash
-cd client
+cd smart_contract
 npm install
-```
-
-Smart contracts:
-```bash
-cd ../smart_contract
-npm install
-```
-
-Simulator:
-```bash
-cd ../Simulator
-pip install -r requirements.txt
-```
-
-### **4. Optional Environment Variables**
-Create `.env` in `smart_contract/` if you want to customize deployment behavior:
-
-```env
-# Optional: simulator update interval written to contracts and Simulator/.env
-SIMULATOR_STEP_SECONDS=60
-
-# Optional: token airdrop and reward pool setup
-AIRDROP_AMOUNT=1000
-REWARD_FUND_AMOUNT=10000
-
-# Optional: explicit private key for simulator sync (0x...)
-DEPLOYER_PRIVATE_KEY=
-SIMULATOR_PRIVATE_KEY=
-```
-
-Notes:
-- If keys are omitted in local Hardhat mode, deploy script tries to derive from default Hardhat mnemonic.
-- Contract addresses are auto-written to frontend files during deployment.
-
-### **5. Start Local Blockchain**
-```bash
-cd ../smart_contract
 npx hardhat node
 ```
 
-### **6. Deploy Contracts (Local Hardhat)**
-In a second terminal:
+Keep the Hardhat node running. In a second terminal, deploy the contracts:
+
 ```bash
 cd smart_contract
 npx hardhat run scripts/deployAll.js --network localhost
 ```
 
-This script also:
-- Authorizes the Shop contract in SolarPanels
-- Airdrops SOLR to local accounts
-- Funds the PowerReward pool
-- Syncs `Simulator/.env` for the simulator
+The deployment script authorizes the contract relationships, funds local test
+accounts, and synchronizes contract addresses with the frontend and simulator.
 
-The deployment scripts write addresses to:
-- `smart_contract/scripts/contractAddress.json`
-- `client/src/utils/contractAddress.json` (auto-synced for the frontend)
+### 3. Start the Simulator
 
-### **7. Start the Simulator**
 ```bash
-cd ../Simulator
+cd Simulator
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 python -m uvicorn main:app --reload
 ```
 
-Default API URL used by frontend: `http://127.0.0.1:8000`
+The API is available at <http://127.0.0.1:8000>; interactive API documentation
+is available at <http://127.0.0.1:8000/docs>.
 
-### **8. Start the Frontend**
-In another terminal:
+### 4. Start the Planner Console
+
 ```bash
 cd client
+npm install
 npm run dev
 ```
 
-Default frontend URL: `http://127.0.0.1:3000`
+Open <http://127.0.0.1:3000> and connect MetaMask to:
 
-### **9. Local Run Checklist (Recommended Order)**
-Run these in separate terminals:
+| Setting | Local value |
+|---|---|
+| RPC URL | `http://127.0.0.1:8545` |
+| Chain ID | `31337` |
+| Network | Hardhat Local |
 
-1. `smart_contract`: `npx hardhat node`
-2. `smart_contract`: `npx hardhat run scripts/deployAll.js --network localhost`
-3. `Simulator`: `python -m uvicorn main:app --reload`
-4. `client`: `npm run dev`
+> [!CAUTION]
+> Import only a Hardhat test key for local development. Never commit private
+> keys or use a production wallet with the local prototype.
 
-Then in MetaMask:
-- Add local chain `http://127.0.0.1:8545`, chain ID `31337`
-- Import a local Hardhat test account key for development only
+## Research Artifact
 
-### **10. MetaMask (Private Chain / Server)**
-For private-chain deployment on a server, users should manually add a custom network in MetaMask:
+The camera-ready artifact centers on the April 2026 controlled benchmark and
+the EIoT evaluation suite.
 
-- Network Name: `SolarChain Private`
-- RPC URL: `https://<your-domain-or-ip>/rpc`
-- Chain ID: `<your-private-chain-id>`
-- Currency Symbol: `<native-gas-token-symbol>`
-- Block Explorer URL: optional
+| Artifact | Scale | Purpose |
+|---|---:|---|
+| [PV node metadata](Simulator/data/datasets_2026_04_month/urban_energy_nodes.csv) | 50 nodes | Five-city panel geometry and installation profiles |
+| [Hourly generation](Simulator/data/datasets_2026_04_month/spatiotemporal_generation.csv) | 36,000 rows | Physical bounds, reports, FDIA labels, and decisions |
+| [Market liquidity](Simulator/data/datasets_2026_04_month/market_liquidity.csv) | 720 rows | Selected 20/80 reward-liquidity policy vs. baseline |
+| [P2P trades](Simulator/data/datasets_2026_04_month/p2p_trades.csv) | 1,185 trades | Factory purchases, token burn, and exergy estimates |
+| [Attack taxonomy](Simulator/data/experiments/attack_taxonomy_results.csv) | 11 scenarios | Detector behavior across physical and contextual attacks |
+| [Event-chain verification](Simulator/data/experiments/event_chain_verification.csv) | Hash checks | Tamper-evident trace validation |
+| [Ratio selection](Simulator/data/experiments/ratio_selection_summary.csv) | Policy summary | Evidence for the default `rewardRatioBps = 2000` |
 
-Notes:
-- The `Chain ID` in MetaMask must exactly match the node's configured chain ID.
-- Use HTTPS RPC in production and ensure public access from user browsers.
-- Do not share or import server/operator private keys into user wallets.
-- Ensure users have enough native gas token to submit transactions.
-- Frontend contract addresses must be the server-deployed addresses (not localhost addresses).
+### Reproduce the Artifacts
 
-Local development fallback (Hardhat):
-- Network: `Hardhat Local`
-- RPC URL: `http://127.0.0.1:8545`
-- Chain ID: `31337`
-- Import a Hardhat test account private key only for local testing
+Run from the repository root after installing the simulator dependencies:
 
----
-
-## **Troubleshooting**
-- **`npx hardhat node` exits with code 1**:
-   - Make sure you are inside `smart_contract/`.
-   - Run `npm install` in `smart_contract/` first.
-   - Check if port `8545` is already in use (stop the existing process or change port).
-
-- **`npm run dev` exits with code 1 in `client/`**:
-   - Ensure `npm install` was executed in `client/`.
-   - Confirm Node.js version is 18+ (`node -v`).
-   - If port `3000` is occupied, free it or change `server.port` in `client/vite.config.js`.
-
-- **Frontend cannot call simulator API**:
-   - Ensure simulator is running on `127.0.0.1:8000`.
-   - Client components use `VITE_SOLAR_AGENT_API` and default to `http://localhost:8000`.
-
-- **Candidate DER Queue is empty**:
-   - Ensure `client/public/datasets_2026_04_month/spatiotemporal_generation.csv` exists, or set `VITE_URBAN_DATASET_DIR` to the folder you want to load.
-   - Confirm the CSV header matches the documented dataset fields.
-   - Refresh the frontend after replacing CSV files.
-
-- **Map shows fewer candidate markers than queue rows**:
-   - This is expected: the queue shows hourly samples, while the map groups samples by `node_id`.
-   - For the bundled monthly dataset, 36,000 hourly records become 50 DER node markers.
-
-- **Approve opens registration but MetaMask does not sign**:
-   - Ensure MetaMask is connected to the expected local/private chain.
-   - Ensure the connected account has enough native gas token and SOLR for the local registration flow.
-
-- **Global Supply / Global Demand is 0**: make sure the simulator is running and that at least one solar panel and factory are created on-chain.
-- **Rewards are 0**: the energy simulator must run at least one step to update the market and reward balances.
-- **Next update stuck at 0m 0s or countdown jumps**:
-   - Ensure `Simulator/.env` has a valid `SIMULATOR_PRIVATE_KEY` and `ENABLE_ENERGY_SIM=true`.
-   - The simulator now syncs contract `simulatorStepSeconds` from `SIMULATOR_STEP_SECONDS` at startup.
-   - Restart simulator after changing `SIMULATOR_STEP_SECONDS`.
-
----
-
-## **Project Structure**
-
-```
-SolarSave/
-├── client/                         # Frontend code
-│   ├── public/datasets_2026_04_month/ # Static CSVs loaded by Planner Workbench
-│   ├── src/                        # Frontend source
-│   │   ├── components/             # Shared React components
-│   │   ├── style/                  # CSS and style files
-│   │   ├── utils/                  # Utility functions
-│   │   ├── App.jsx                 # Main application file
-│   │   ├── index.jsx               # Entry file
-│   └── package.json
-├── Simulator/                      # Simulator
-│   ├── SolarPVModel.py             # Solar panel logic simulation
-│   ├── main.py                     # Simulator entry point
-│   ├── requirements.txt            # Python dependencies
-├── smart_contract/                 # Smart contracts
-│   ├── contracts/                  # Smart contract files
-│   │   ├── SolarPanels.sol         # Solar panel registry
-│   │   ├── Factory.sol             # Factory registry
-│   │   ├── EnergyExchange.sol      # Supply/demand and reward market
-│   │   ├── Shop.sol                # Panel marketplace
-│   │   ├── PowerReward.sol         # Reward distribution
-│   │   ├── SolarToken.sol          # ERC-20 token (SOLR)
-│   ├── scripts/                    # Deployment and interaction scripts
-│   ├── hardhat.config.js           # Hardhat configuration
-│   ├── package.json
-│   ├── README.md                   # Smart contract documentation
-└── README.md                       # Project documentation
+```bash
+python Simulator/data/generate_monthly_datasets.py
+python Simulator/experiments/run_all_eiot_experiments.py
+python Simulator/data/visualizations.py
 ```
 
----
+### Validate the Release
 
-## **How to Use SolarChain**
+```bash
+python -m pytest tests
+```
 
-1. **Connect Wallet and Load Contracts**:
-   - Open the frontend application.
-   - Connect MetaMask to the local Hardhat network.
+```bash
+cd smart_contract
+npm test
+```
 
-2. **Review Candidate DER Samples**:
-   - Open the Planner Decision Console.
-   - Use the left-side Planner Workbench to inspect verification metrics and toggle data layers.
-   - Select an hourly record from Candidate DER Queue or click a DER marker on the map.
+```bash
+cd client
+npm run build
+```
 
-3. **Approve, Reject, or Convert a Candidate**:
-   - Review irradiance, air temperature, `P_max_W`, reported power, residual, and risk status.
-   - Reject suspicious FDIA records without sending an on-chain transaction.
-   - Approve trusted candidates and use the Planner Review & Registration window to sign and register them as on-chain solar panels.
+## Smart Contracts
 
-4. **Create Manual Solar Panels and Factories**:
-   - Right-click the map to manually create a solar panel or register a factory.
-   - Manual panel creation still uses simulator prediction data and now passes through planner review before wallet signature.
-   - Factory registration saves location and consumption for demand-side market modeling.
+| Contract | Responsibility |
+|---|---|
+| [`SolarPanels.sol`](smart_contract/contracts/SolarPanels.sol) | Solar asset registry, ownership, and panel state |
+| [`Factory.sol`](smart_contract/contracts/Factory.sol) | Factory registration and demand-side entities |
+| [`EnergyExchange.sol`](smart_contract/contracts/EnergyExchange.sol) | Supply, demand, configurable reward allocation, claims, and purchases |
+| [`SolarToken.sol`](smart_contract/contracts/SolarToken.sol) | ERC-20 SOLR payment and reward token |
+| [`Shop.sol`](smart_contract/contracts/Shop.sol) | Solar-panel marketplace operations |
+| [`PowerReward.sol`](smart_contract/contracts/PowerReward.sol) | DC-power-linked reward distribution |
 
-5. **Run Market Updates with Simulator**:
-   - Start the simulator to generate/update panel output.
-   - Let the simulator update market supply, demand, and personal rewards.
+The default market allocation is **20% producer reward / 80% liquidity**,
+represented on-chain as `rewardRatioBps = 2000`.
 
-6. **Trade and Allocate Energy**:
-   - Use the market dashboard to inspect global supply/demand.
-   - Purchase energy for factories and monitor factory balances.
-   - Use Market Impact to compare verified SolarChain liquidity with the no-split baseline.
+## API Surface
 
-7. **Claim Rewards and Manage SOLR**:
-   - Claim personal rewards when cooldown allows.
-   - Manage SOLR balances and transfers through wallet UI.
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/run_model/` | POST | Run the PV prediction model |
+| `/run_combined_model/` | POST | Combine solar prediction inputs |
+| `/agents/status` | GET | Inspect the current embodied-agent loop |
+| `/agents/step` | POST | Execute one coordination step |
+| `/agents/run_episode` | POST | Run a configured agent episode |
+| `/agents/events` | GET | Read recent agent events |
+| `/agents/audit` | GET | Inspect audit events |
+| `/agents/market_summary` | GET | Read market-level results |
+| `/agents/settle_verified_step` | POST | Submit a verified market step for settlement |
 
----
+## Project Map
 
-## **Smart Contract Features**
+| Path | What lives there |
+|---|---|
+| [`client/`](client) | React, Leaflet, planner console, market views, and wallet interactions |
+| [`Simulator/`](Simulator) | FastAPI service, PV physics model, agents, datasets, and experiments |
+| [`smart_contract/`](smart_contract) | Solidity contracts, Hardhat deployment scripts, and contract tests |
+| [`tests/`](tests) | Research-artifact and embodied-agent evaluation tests |
+| [`docs/`](docs) | Release record, evaluation map, and supporting research documentation |
 
-### **Core Contracts**
-- **SolarPanels.sol**: create/update panels, query all panels, query panels by owner.
-- **Factory.sol**: register factories and query personal/global factory lists.
-- **EnergyExchange.sol**: tracks market supply/demand, accrues personal rewards, handles reward claiming, and supports factory energy purchases.
-- **Shop.sol**: list panels for sale, buy panels, approve sales.
-- **PowerReward.sol**: claim rewards based on panel DC power; owner can deposit reward tokens.
-- **SolarToken.sol**: ERC-20 token (SOLR) used for payments and rewards.
+## Configuration
 
-### **Local Rewards Note**
-For local testing, the reward contract must hold SOLR. Deposit SOLR from the owner account before claiming rewards.
+| Variable | Default | Purpose |
+|---|---|---|
+| `SIMULATOR_RPC_URL` | `http://127.0.0.1:8545` | EVM JSON-RPC endpoint |
+| `SIMULATOR_PRIVATE_KEY` | unset | Local signer used for simulator settlement |
+| `SIMULATOR_STEP_SECONDS` | `3600` | Coordination and market-step interval |
+| `ENABLE_ENERGY_SIM` | `auto` | Enable, disable, or auto-detect settlement |
+| `SIMULATOR_CORS_ORIGINS` | local frontend origins | Allowed simulator API origins |
+| `VITE_SOLAR_AGENT_API` | `http://localhost:8000` | Frontend simulator API base URL |
+| `VITE_URBAN_DATASET_DIR` | bundled public dataset | Frontend CSV dataset directory |
 
----
+## Documentation
 
-## **Contribution Guide**
+| Guide | Description |
+|---|---|
+| [Camera-ready release record](docs/camera_ready_release.md) | Publication identity, checksum, artifact map, and scope |
+| [EIoT evaluation artifacts](docs/eiot_evaluation_artifacts.md) | Claims-to-evidence map for datasets and experiments |
+| [Dataset documentation](Simulator/data/README.md) | Dataset organization, fields, and generation workflow |
+| [Simulator guide](Simulator/README.md) | API and model-specific setup |
+| [Contract guide](smart_contract/README.md) | Contract deployment and interaction notes |
 
-Welcome to contribute! Ways to contribute:
+<details>
+<summary><strong>Common troubleshooting</strong></summary>
+
+- **No contracts in the UI:** deploy with `deployAll.js` after starting the
+  Hardhat node, then confirm the generated address files were updated.
+- **Empty candidate queue:** confirm
+  `client/public/datasets_2026_04_month/spatiotemporal_generation.csv` exists.
+- **Only 50 map markers:** expected; 36,000 hourly records are grouped by
+  `node_id` into 50 locations.
+- **Simulator cannot settle:** check `SIMULATOR_RPC_URL`,
+  `SIMULATOR_PRIVATE_KEY`, and `ENABLE_ENERGY_SIM`.
+- **Rewards stay at zero:** run at least one simulator market step and ensure the
+  reward contract has been funded with local SOLR.
+
+</details>
+
+## Scope and Limitations
+
+> [!IMPORTANT]
+> SolarChain is a **controlled research prototype**, not a utility deployment.
+> Weather is city-level rather than per-panel telemetry; PV nodes, FDIA labels,
+> demand, and trades are simulated for benchmark control. The repository does
+> not claim production readiness, sensor authenticity, economic optimality, or
+> a completed smart-contract security audit.
+
+## Publication
+
+This repository is the final artifact release for:
+
+> **SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design**<br />
+> UbiComp Companion '26, Shanghai, China
+
+See the [camera-ready release record](docs/camera_ready_release.md) for the paper
+checksum and the [evaluation artifact map](docs/eiot_evaluation_artifacts.md)
+for reproducibility links.
+
+## Contributing
+
+Contributions are welcome:
+
 1. Fork the repository.
-2. Create a new branch for modifications.
-3. Submit a Pull Request with a clear description.
+2. Create a focused branch.
+3. Add or update tests for behavioral changes.
+4. Open a pull request describing the motivation, implementation, and evidence.
 
----
+For questions or proposals, [open a GitHub issue](https://github.com/sunshineluyao/SolarSave/issues).
 
-## **License**
+## License
 
-This project is licensed under the [MIT License](LICENSE).
+SolarChain is released under the [MIT License](LICENSE).
 
----
-
-## **Future Plans**
-
-- **Dataset Upload UI**: Add browser-side CSV upload for candidate DER and market-liquidity records.
-- **Machine Learning Integration**: Improve FDIA detection and generation-boundary confidence scoring.
-- **Planner Collaboration**: Support multi-reviewer approval policies and persistent audit logs.
-- **Cross-chain Support**: Extend to other blockchain platforms.
-- **Advanced Market Strategy**: Improve matching between distributed generation and factory demand.
-
----
-
-## **Contact**
-
-For questions or suggestions, please contact:
-- **GitHub Issue**: [Submit an issue](https://github.com/GreenComp-ERC/SolarSave/issues)
-
----
-
-Through **SolarChain**, let's contribute to a sustainable future!
+<div align="center">
+  <sub>Built for inspectable solar-energy coordination, from physical evidence to verifiable settlement.</sub>
+</div>
