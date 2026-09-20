@@ -42,6 +42,13 @@
   </p>
 
   <p>
+    <a href="docs/publications/solarchain-paper-camera-ready.pdf"><img alt="Read the camera-ready paper" src="https://img.shields.io/badge/Paper-PDF-8B1E3F?style=for-the-badge" /></a>
+    <a href="docs/publications/solarchain-eiot-poster.pdf"><img alt="View the EIoT poster" src="https://img.shields.io/badge/Poster-PDF-1F5C99?style=for-the-badge" /></a>
+    <a href="docs/publications/README.md"><img alt="Publication archive" src="https://img.shields.io/badge/Publication_Archive-Details-4B5563?style=for-the-badge" /></a>
+  </p>
+
+  <p>
+    <a href="#research-outputs">Paper &amp; Poster</a> •
     <a href="#architecture">Architecture</a> •
     <a href="#quick-start">Quick Start</a> •
     <a href="#research-artifact">Research Artifact</a> •
@@ -49,6 +56,14 @@
     <a href="#documentation">Documentation</a>
   </p>
 </div>
+
+## Research Outputs
+
+| Output | Description | Access |
+|---|---|:---:|
+| Camera-ready paper | *SolarChain: A Physics-Grounded Embodied IoT System for Verifiable Urban Solar Market Design* | [PDF](docs/publications/solarchain-paper-camera-ready.pdf) |
+| Conference poster | EIoT 2026 poster | [PDF](docs/publications/solarchain-eiot-poster.pdf) |
+| Publication archive | Compilation notes and file provenance | [Open](docs/publications/README.md) |
 
 > [!NOTE]
 > **SolarChain** is the product and paper name. The repository remains named
